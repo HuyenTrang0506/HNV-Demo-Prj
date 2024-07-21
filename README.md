@@ -1,2 +1,2 @@
 # HNV-Demo-Prj
- training projectz
+ training project
