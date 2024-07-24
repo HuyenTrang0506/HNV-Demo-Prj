@@ -200,14 +200,30 @@ define(['require',
 			
 			//------------------------------------------------------------------------------
 			if (App.router.routes.LOGOUT)
-			this.router.add(App.router.routes.LOGOUT + '/:FIRST_VIEW', function () {
-				if (App) {
-					App.data            = {};
-					App.data.session_id = -1;
-				}
+						this.router.add(App.router.routes.LOGOUT + '/:FIRST_VIEW', function () {
+							if (App) {
+								App.data            = {};
+								App.data.session_id = -1;
+							}
+							let { url } = this;
+							let options = {
+									grpName		: "group", 
+									ctrlName	: "Login",
+									ctrlPath	: "group/login/ctrl/LoginController", 
+									ctrlParams	: [],
+									fInit		: "do_lc_init", 
+									fInitParams	: [],
+									fShow		: "do_lc_show", 
+									fShowParams	: [],
+									fCallBack  		: null,
+									fCallBackParams	: null 
+							}
 
-				self.do_lc_clearHistory();
-			});
+							do_gl_load_JSController_ByRequireJS(App.controller, options);
+							self.do_lc_pushHistory(this.url);
+							
+							self.do_lc_clearHistory();
+						});
 
 		}
 

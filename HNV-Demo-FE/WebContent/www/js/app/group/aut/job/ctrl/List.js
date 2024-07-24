@@ -1,17 +1,11 @@
 define([
         'jquery',
-        'text!group/aut/user/tmpl/List.html',
-        'text!group/aut/user/tmpl/List_Typ_Adm.html' ,
-        'text!group/aut/user/tmpl/List_Typ_Agent.html' ,
-        'text!group/aut/user/tmpl/List_Typ_Cand.html' ,
-        'text!group/aut/user/tmpl/List_Typ_Recr.html' ,
+        'text!group/aut/job/tmpl/List.html',
+        'text!group/aut/job/tmpl/List_Typ_Mat.html' ,
         ],
         function($, 
         		Tmpl_List,
-        		Tmpl_List_Typ_Adm,
-        		Tmpl_List_Typ_Agent,
-        		Tmpl_List_Typ_Cand,
-        		Tmpl_List_Typ_Recr
+       			Tmpl_List_Typ_Mat
         ) 
         {
 
@@ -37,7 +31,7 @@ define([
 		var self 					= this;
 		
 		//------------------------------------------------------------------------------------
-		var pr_SERVICE_CLASS		= "ServiceAutUser"; //to change by your need
+		var pr_SERVICE_CLASS		= "ServiceJobReport"; //to change by your need
 		var pr_SERVICE_NAME			= "SVLstDyn";
 		//------------------controllers------------------------------------------------------
 		var pr_ctr_Main 			= null;
@@ -46,24 +40,14 @@ define([
 		//-----------------------------------------------------------------------------------
 		var pr_datatables			= {};
 		//-----------------------------------------------------------------------------------
-		var pr_TYP_01_ADM				= "2";
-		var pr_TYP_01_AGENT				= "3";
-		/*var pr_TYP_01_CLIENT			= "3";
-		var pr_TYP_02_CAND				= "100";
-		var pr_TYP_02_RECR				= "200";*/
+		var pr_TYP_01_MAT				= "1";
 		//--------------------APIs--------------------------------------//
 		this.do_lc_init		= function(){
 			tmplName.LIST								= "List";
-			tmplName.LIST_TYP_ADM						= "List_Typ_Adm";
-			tmplName.LIST_TYP_AGENT						= "List_Typ_Agent";
-			tmplName.LIST_TYP_CAND						= "List_Typ_Cand";
-			tmplName.LIST_TYP_RECR						= "List_Typ_Recr";
-			
+			tmplName.LIST_TYP_MAT						= "div_List_Typ_mat";
+															
 			tmplCtrl.do_lc_put_tmpl(tmplName.LIST				, Tmpl_List);
-			tmplCtrl.do_lc_put_tmpl(tmplName.LIST_TYP_ADM		, Tmpl_List_Typ_Adm); 
-			tmplCtrl.do_lc_put_tmpl(tmplName.LIST_TYP_AGENT		, Tmpl_List_Typ_Agent);   
-			tmplCtrl.do_lc_put_tmpl(tmplName.LIST_TYP_CAND		, Tmpl_List_Typ_Cand); 
-			tmplCtrl.do_lc_put_tmpl(tmplName.LIST_TYP_RECR		, Tmpl_List_Typ_Recr);  
+			tmplCtrl.do_lc_put_tmpl(tmplName.LIST_TYP_MAT		, Tmpl_List_Typ_Mat); 
 			//-----------------------------------------------------------------------------------
 			pr_ctr_Main 			= App.controller[pr_grpName].Main;
 			pr_ctr_List 			= App.controller[pr_grpName].List;
@@ -76,10 +60,7 @@ define([
 		this.do_lc_show = function(){               
 			try{
 				$(pr_divContent).html(tmplCtrl.req_lc_compile_tmpl(tmplName.LIST		, {}));
-				self.do_lc_show_byTypeStat("#div_List_Typ_Adm"		, tmplName.LIST_TYP_ADM	 		, 	pr_TYP_01_ADM	, null	, null);
-				self.do_lc_show_byTypeStat("#div_List_Typ_Agent"	, tmplName.LIST_TYP_AGENT		, 	pr_TYP_01_AGENT	, null	, null);
-//				self.do_lc_show_byTypeStat("#div_List_Typ_Cand"		, tmplName.LIST_TYP_CAND	 	, 	pr_TYP_01_CLIENT, pr_TYP_02_CAND	, null);
-//				self.do_lc_show_byTypeStat("#div_List_Typ_Recr"		, tmplName.LIST_TYP_RECR	 	, 	pr_TYP_01_CLIENT, pr_TYP_02_RECR	, null);
+				self.do_lc_show_byTypeStat("#div_List_Typ_mat"		, tmplName.LIST_TYP_MAT	 		, 	pr_TYP_01_MAT	, null	, null);
 				//---------------------------------------------------------------
 				App.controller.DBoard.DBoardMain.do_lc_bind_event_div_Minimize();
 			}catch(e) {	
@@ -112,11 +93,8 @@ define([
 			if(stat)	{
 				ref.stat 			= stat;
 			}
-			var lang = localStorage.language;
-			if (lang ==null ) lang 	= "vi";	
-						
-			var fileTransl 			= "www/js/lib/datatables/datatable_"+lang+".json";
 			
+			var fileTransl			= null;
 			var additionalConfig 	= {};
 			var colConfig			= req_gl_table_col_config($(div).find("table"), null, additionalConfig);
 			var dataTableOption 	= {

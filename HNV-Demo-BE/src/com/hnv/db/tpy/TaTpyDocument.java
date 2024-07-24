@@ -42,7 +42,8 @@ import com.hnv.data.json.JSONObject;
 import com.hnv.db.EntityAbstract;
 import com.hnv.db.EntityDAO;
 import com.hnv.db.aut.TaAutUser;
-import com.hnv.db.mat.TaMatMaterial;
+import com.hnv.db.job.TaJobReport;
+
 import com.hnv.def.DefAPIExt;
 import com.hnv.def.DefDBExt;
 
@@ -557,7 +558,7 @@ public class TaTpyDocument extends EntityAbstract<TaTpyDocument> {
 	private static final String 	IMG_EXT							= "jpg";
 
 	// 
-	public static List<TaTpyDocument> reqListCheck (int mode, TaMatMaterial user, Integer entTyp, Integer entID,  JSONArray lstJson) throws Exception {
+	public static List<TaTpyDocument> reqListCheck (int mode, TaJobReport user, Integer entTyp, Integer entID,  JSONArray lstJson) throws Exception {
 		if (mode==DefAPI.SV_MODE_NEW && (lstJson == null || lstJson.size() == 0)) return null; //add address
 		
 		List<TaTpyDocument> lstEntDocs = new ArrayList<TaTpyDocument>();
@@ -658,7 +659,7 @@ public class TaTpyDocument extends EntityAbstract<TaTpyDocument> {
 		return allDocs;
 	}
 
-	public static List<TaTpyDocument> reqListSaveFromNewToValidated(TaMatMaterial user, Integer entTyp, Integer entID, List<TaTpyDocument> docs) throws Exception {
+	public static List<TaTpyDocument> reqListSaveFromNewToValidated(TaJobReport user, Integer entTyp, Integer entID, List<TaTpyDocument> docs) throws Exception {
 		String sDate			= ToolDate.reqString(new Date(), "yyMMdd");
 		for (TaTpyDocument doc: docs) {
 			int 	fType01		= doc.reqInt	(TaTpyDocument.ATT_I_TYPE_01);

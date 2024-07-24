@@ -1,4 +1,4 @@
-package com.hnv.api.service.priv.mat;
+package com.hnv.api.service.priv.job;
 
 
 import java.util.Date;
@@ -36,8 +36,9 @@ import com.hnv.db.aut.TaAutAuthUser;
 import com.hnv.db.aut.TaAutHistory;
 import com.hnv.db.aut.TaAutUser;
 import com.hnv.db.mat.vi.ViMatMaterialDyn;
-import com.hnv.db.mat.TaMatMaterial;
+
 import com.hnv.db.aut.vi.ViAutUserMember;
+import com.hnv.db.job.TaJobReport;
 import com.hnv.db.per.TaPerPerson;
 import com.hnv.db.sys.TaSysLock;
 import com.hnv.db.tpy.TaTpyCategory;
@@ -48,11 +49,11 @@ import com.hnv.def.DefDBExt;
  * ----- ServiceNsoPost by H&V
  * ----- Copyright 2017------------
  */
-public class ServiceMatMaterial implements IService {
+public class ServiceJobReport implements IService {
 	//--------------------------------Service Definition----------------------------------
 	public static final String SV_MODULE 					= "EC_V3".toLowerCase();
 
-	public static final String SV_CLASS 					= "ServiceMatMaterial".toLowerCase();	
+	public static final String SV_CLASS 					= "ServiceJobReport".toLowerCase();	
 
 	public static final String SV_GET 						= "SVGet".toLowerCase();	
 	public static final String SV_LST_IN_IDS				= "SVLstInIds".toLowerCase();
@@ -74,10 +75,10 @@ public class ServiceMatMaterial implements IService {
 	public static final String SV_GET_FILE 					= "SVGetFile".toLowerCase();	
 	public static final String SV_MOD_TRANSL				= "SVModTransl".toLowerCase();	
 
-	public static final Integer	ENT_TYP						= DefDBExt.ID_TA_MAT_MATERIAL;
+	public static final Integer	ENT_TYP						= DefDBExt.ID_TA_JOB_REPORT;
 	//-----------------------------------------------------------------------------------------------
 	//-------------------------Default Constructor - Required -------------------------------------
-	public ServiceMatMaterial(){
+	public ServiceJobReport(){
 		ToolLogServer.doLogInf("----" + SV_CLASS + " is loaded -----");
 	}
 
@@ -102,7 +103,7 @@ public class ServiceMatMaterial implements IService {
 				doLstInIds(user, json, response);
 			} else if(sv.equals(SV_LST)				&&  (APIAuth.canAuthorizeWithOneRight(user, APIAuth.R_ADMIN, APIAuth.R_AUT_ALL_GET, APIAuth.R_AUT_USER_GET)
 													||	APIAuth.canAuthorize(user, SV_CLASS, sv))) {
-			//	doLst(user,  json, response);
+//				doLst(user,  json, response);
 			} else if(sv.equals(SV_LST_DYN)			&&  (APIAuth.canAuthorizeWithOneRight(user, APIAuth.R_ADMIN, APIAuth.R_AUT_ALL_GET, APIAuth.R_AUT_USER_GET)
 													||	APIAuth.canAuthorize(user, SV_CLASS, sv))) {
 				doLstDyn(user,  json, response);
@@ -213,9 +214,9 @@ public class ServiceMatMaterial implements IService {
 		Integer 			entId		= ToolData.reqInt	(json, "id"			, -1	);				
 		Boolean				forced		= ToolData.reqBool	(json, "forced"		, true	);
 //		Boolean				forManager	= ToolData.reqBool	(json, "forManager"	, false	);
-
-		TaMatMaterial 			ent 		= reqGet(entId, forced);
-
+		System.out.println("entype: " + ENT_TYP);
+		TaJobReport			ent 		= reqGet(entId, forced);
+		
 		if (ent==null){
 			API.doResponse(response, DefAPI.API_MSG_KO);
 			return;
@@ -225,7 +226,7 @@ public class ServiceMatMaterial implements IService {
 			API.doResponse(response, DefAPI.API_MSG_ERR_RIGHT);
 			return;
 		}
-
+		
 		API.doResponse(response, ToolJSON.reqJSonString(
 				filter,
 				DefJS.SESS_STAT		, 1, 
@@ -234,13 +235,13 @@ public class ServiceMatMaterial implements IService {
 				));
 	}
 	
-	private static CacheData<TaMatMaterial> 		cache_entity= new CacheData<TaMatMaterial>		(500, DefTime.TIME_24_00_00_000 );
-	public static TaMatMaterial reqGet(Integer entId, Boolean forced) throws Exception{
+	private static CacheData<TaJobReport> 		cache_entity= new CacheData<TaJobReport>		(500, DefTime.TIME_24_00_00_000 );
+	public static TaJobReport reqGet(Integer entId, Boolean forced) throws Exception{
 		String 			key		= entId+"";
-		TaMatMaterial 		ent 	= cache_entity.reqData(key);	
+		TaJobReport 		ent 	= cache_entity.reqData(key);	
 		
 		if (forced || ent == null) {
-			ent 	= TaMatMaterial.DAO.reqEntityByRef(entId);
+			ent 	= TaJobReport.DAO.reqEntityByRef(entId);
 			if (ent!=null) {
 				//---do something and put to cache
 				cache_entity.reqPut(key, ent);
@@ -300,22 +301,6 @@ public class ServiceMatMaterial implements IService {
 	}
 	
 	//---------------------------------------------------------------------------------------------------------
-//	private static void doLst(TaAutUser user,  JSONObject json, HttpServletResponse response) throws Exception  {
-//		//ToolLogServer.doLogDebug("--------- "+ SV_CLASS+ ".doLst --------------");
-//
-//		List<ViMatMaterial> 	list = reqLst(user, json); //and other params if necessary
-//		if (list==null ){
-//			API.doResponse(response,DefAPI.API_MSG_KO);
-//			return;
-//		}
-//
-//		API.doResponse(response, ToolJSON.reqJSonString(		
-//				filter,
-//				DefJS.SESS_STAT		, 1, 
-//				DefJS.SV_CODE		, DefAPI.SV_CODE_API_YES,
-//				DefJS.RES_DATA		, list 
-//				));				
-//	}
 
 	
 //	private static List<ViMatMaterial> reqLst(TaAutUser user, JSONObject json) throws Exception  {
@@ -350,7 +335,7 @@ public class ServiceMatMaterial implements IService {
 		Set<Integer>		stat01			= ToolData.reqSetInt	(json, "stat01"	, null);
 		Boolean forced = ToolData.reqBool(json, "forced", true);
 		
-		
+		System.out.println("chayj r ne: ");
 		if (!canWorkWithObj(user, WORK_LST, null, stat01)){ //other param after objTyp...
 			API.doResponse(response,DefAPI.API_MSG_KO);
 			return;
@@ -358,7 +343,7 @@ public class ServiceMatMaterial implements IService {
 		//-------------------------------------------------------------------
 		Criterion 	cri 				= reqRestriction(user, searchKey, null, stat01);				
 
-		List<ViMatMaterialDyn> list 		= reqListDyn(dataTableOption,cri,forced);
+		List<TaJobReport> list 		= reqListDyn(dataTableOption,cri,forced);
 		if (list==null ){
 			API.doResponse(response,DefAPI.API_MSG_KO);
 			return;
@@ -367,10 +352,6 @@ public class ServiceMatMaterial implements IService {
 //				p.doBuildUserLogin(true);
 //			}
 		}
-
-//		Integer iTotalRecords 			= reqNbNsoPostListDyn().intValue();				
-//		Integer iTotalDisplayRecords 	= reqNbNsoPostListDyn(cri).intValue();
-
 
 		API.doResponse(response, ToolJSON.reqJSonString(		
 				filter,
@@ -512,13 +493,13 @@ public class ServiceMatMaterial implements IService {
 		return cri;
 	}
 
-	private static List<ViMatMaterialDyn> reqListDyn(Object[] dataTableOption, 	Criterion 	cri, Boolean forced) throws Exception {		
+	private static List<TaJobReport> reqListDyn(Object[] dataTableOption, 	Criterion 	cri, Boolean forced) throws Exception {		
 		int begin 		= (int)	dataTableOption[1];
 		int number 		= (int)	dataTableOption[2]; 
 		int sortCol 	= (int)	dataTableOption[3]; 
 		int sortTyp 	= (int)	dataTableOption[4];	
 
-		List<ViMatMaterialDyn> list 	= null;		
+		List<TaJobReport> list 	= null;		
 
 		Order 	order 	= null;			
 		String 	colName = null;
@@ -536,11 +517,11 @@ public class ServiceMatMaterial implements IService {
 		}
 
 		if (order==null)
-			list	= ViMatMaterialDyn.DAO.reqList(begin, number);
+			list	= TaJobReport.DAO.reqList(begin, number);
 		else
-			list	= ViMatMaterialDyn.DAO.reqList(begin, number, order);			
+			list	= TaJobReport.DAO.reqList(begin, number, order);			
 		if(list!=null) {
-			for (ViMatMaterialDyn v : list) {
+			for (TaJobReport v : list) {
 				v.doBuildDocuments(forced);
 			}
 		}
@@ -557,7 +538,7 @@ public class ServiceMatMaterial implements IService {
 //
 //	//---------------------------------------------------------------------------------------------------------
 	private static void doNew (TaAutUser user,  JSONObject json, HttpServletResponse response) throws Exception  {
-		TaMatMaterial 			ent		= reqNew		(user, json);
+		TaJobReport 			ent		= reqNew		(user, json);
 		if (ent==null){
 			API.doResponse(response, ToolJSON.reqJSonString(
 					DefJS.SESS_STAT		, 1, 
@@ -575,29 +556,30 @@ public class ServiceMatMaterial implements IService {
 				));
 	}
 
-	private static TaMatMaterial reqNew(TaAutUser user,  JSONObject json) throws Exception {
+	private static TaJobReport reqNew(TaAutUser user,  JSONObject json) throws Exception {
 		Integer			userId		= user.reqId();
 		Integer			manId		= user.reqPerManagerId();
 		JSONObject		obj			= ToolData.reqJson(json, "obj", null);
 
 		//--------------------------------------------------------------------------------------------
-		Map<String, Object> attrUsr = API.reqMapParamsByClass(obj	, TaMatMaterial.class);
+		Map<String, Object> attrUsr = API.reqMapParamsByClass(obj	, TaJobReport.class);
 //		{"inf01":"name"}
 //		attrUsr = {"T_Login_01":"name","T_n":1}
 // 		attrUsr.get("T_Login_01)
 		
 		
 		//----set value------------------------------------------------------------------------------------
-		attrUsr.put(TaMatMaterial.ATT_I_STATUS_01, 1);
+		attrUsr.put(TaJobReport.ATT_I_STATUS, 1);
+		attrUsr.put(TaJobReport.ATT_I_AUT_USER_01, userId);
 		
 	
 
-		TaMatMaterial ent = new TaMatMaterial(attrUsr);	
-		TaMatMaterial.DAO.doPersist(ent);
+		TaJobReport ent = new TaJobReport(attrUsr);	
+		TaJobReport.DAO.doPersist(ent);
 		 int entId = ent.reqId();
 
-//		    JSONArray docs = (JSONArray) obj.get("files");
-//		    ent.reqSet(TaMatMaterial.ATT_O_DOCUMENTS, TaTpyDocument.reqListCheck(DefAPI.SV_MODE_NEW, ent, ENT_TYP, entId, docs));
+		 JSONArray docs = (JSONArray) obj.get("files");
+		ent.reqSet(TaJobReport.ATT_O_DOCUMENTS, TaTpyDocument.reqListCheck(DefAPI.SV_MODE_NEW, ent, ENT_TYP, entId, docs));
 
 		
 		return ent;
@@ -609,7 +591,7 @@ public class ServiceMatMaterial implements IService {
 	private static void doMod(TaAutUser user,  JSONObject json, HttpServletResponse response) throws Exception  {
 		//ToolLogServer.doLogDebug("--------- "+ SV_CLASS+ ".doMod --------------");
 
-		TaMatMaterial  		ent	 	=  reqMod(user, json, false); 								
+		TaJobReport  		ent	 	=  reqMod(user, json, false); 								
 		if (ent==null){
 			API.doResponse(response,DefAPI.API_MSG_KO);
 		} else {
@@ -621,11 +603,11 @@ public class ServiceMatMaterial implements IService {
 		}		
 	}
 
-	private static TaMatMaterial reqMod(TaAutUser user,  JSONObject json, boolean wAuths) throws Exception {
+	private static TaJobReport reqMod(TaAutUser user,  JSONObject json, boolean wAuths) throws Exception {
 		JSONObject			obj		= ToolData.reqJson 	(json	, "obj"	, null);
 		int 				entId 	= ToolData.reqInt	(obj	, "id"	, -1);
-		TaMatMaterial 			ent 	= TaMatMaterial.DAO.reqEntityByRef(entId);
-		Map<String, Object> attr 		= API.reqMapParamsByClass(obj, TaMatMaterial.class);
+		TaJobReport 			ent 	= TaJobReport.DAO.reqEntityByRef(entId);
+		Map<String, Object> attr 		= API.reqMapParamsByClass(obj, TaJobReport.class);
 		
 		if (ent==null){
 			return null;
@@ -636,11 +618,11 @@ public class ServiceMatMaterial implements IService {
 		}
 	
 		
-		TaMatMaterial.DAO.doMerge(ent, attr);	
-		cache_entity.reqPut(entId+"", ent);
+		TaJobReport.DAO.doMerge(ent, attr);	
+//		cache_entity.reqPut(entId+"", ent);
 		//merge files for material
-//		JSONArray	docs		= (JSONArray) obj.get("files");	
-//		ent.reqSet(TaMatMaterial.ATT_O_DOCUMENTS, TaTpyDocument.reqListCheck(DefAPI.SV_MODE_MOD, ent, ENT_TYP, entId, docs));
+		JSONArray	docs		= (JSONArray) obj.get("files");	
+		ent.reqSet(TaJobReport.ATT_O_DOCUMENTS, TaTpyDocument.reqListCheck(DefAPI.SV_MODE_MOD, ent, ENT_TYP, entId, docs));
 
 	
 		return ent;
@@ -673,7 +655,7 @@ public class ServiceMatMaterial implements IService {
 
 	private static boolean canDel(TaAutUser user,  JSONObject json) throws Exception {
 		Integer 	entId	= ToolData.reqInt	(json, "id", null	);	
-		TaMatMaterial  	ent	 	= TaMatMaterial.DAO.reqEntityByRef(entId);
+		TaJobReport  	ent	 	= TaJobReport.DAO.reqEntityByRef(entId);
 		if (ent==null){
 			return false;
 		}
@@ -684,19 +666,19 @@ public class ServiceMatMaterial implements IService {
 				return false;
 			}	
 			Session sessSub 	= TaTpyDocument	.DAO.reqSessionCurrent();
-			Session sessMain 	= TaMatMaterial		.DAO.reqSessionCurrent();
+			Session sessMain 	= TaJobReport		.DAO.reqSessionCurrent();
 			try {
 				TaTpyDocument		.doListDel	(sessSub, ENT_TYP, entId);
 
-				TaMatMaterial	.DAO.doRemove(sessMain, ent);
+				TaJobReport	.DAO.doRemove(sessMain, ent);
 				
 				cache_entity.reqDel(entId+"");
 				
-				TaMatMaterial			.DAO.doSessionCommit(sessMain);
+				TaJobReport			.DAO.doSessionCommit(sessMain);
 //				TaTpyDocument		.DAO.doSessionCommit(sessSub);
 			}catch(Exception e){
 				e.printStackTrace();
-				TaMatMaterial			.DAO.doSessionRollback(sessMain);
+				TaJobReport			.DAO.doSessionRollback(sessMain);
 //				TaTpyDocument		.DAO.doSessionRollback(sessSub);
 			}		
 		
@@ -750,7 +732,7 @@ public class ServiceMatMaterial implements IService {
 			return;
 		}
 		
-		TaMatMaterial  		ent	 	=  reqMod(user, json, true); 								
+		TaJobReport  		ent	 	=  reqMod(user, json, true); 								
 		if (ent==null){
 			API.doResponse(response,DefAPI.API_MSG_KO);
 		} else {				
@@ -773,7 +755,7 @@ public class ServiceMatMaterial implements IService {
 		}
 		
 		
-		TaMatMaterial ent = reqMod(user, json, true);						
+		TaJobReport ent = reqMod(user, json, true);						
 		if (ent==null){
 			API.doResponse(response,DefAPI.API_MSG_KO);
 		} else {

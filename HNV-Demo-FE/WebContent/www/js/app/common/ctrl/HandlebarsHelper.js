@@ -62,8 +62,22 @@ define([
 		$el.find('[value="' + value + '"]').attr({'selected':'selected'});
 		return $el.html();
 	});
+	Handlebars.registerHelper('checkbox', function(value, options) {
+	 	
+	    var $el = $('<div />').html(options.fn(this));
+		console.log(value);
+	    // Iterate over each checkbox and set the checked attribute
+		$el.find('[type="radio"]').each(function() {
+		       var $radio = $(this);
+		       if ($radio.val() == value) {
+		           $radio.attr({'checked': 'checked'}); // Use .attr() for setting the checked attribute
+		       } else {
+		           $radio.removeAttr('checked'); // Ensure other radios are not checked
+		       }
+		   });
 
-
+	    return new Handlebars.SafeString($el.html()); // Return the modified HTML
+	});
 //	translate with i18n
 	Handlebars.registerHelper('transl', function(...i18n_key) {
 		var key	   = '';

@@ -342,15 +342,20 @@ public class ServiceAutUser implements IService {
 		Object[]  			dataTableOption = ToolDatatable.reqDataTableOption (json, null);
 		Set<String>			searchKey		= (Set<String>)dataTableOption[0];
 		Set<Integer>		stats			= ToolData.reqSetInt	(json, "stats"	, null);
-	
+		Integer				typ01			= ToolData.reqInt		(json, "typ01"	, null);
+		Integer				typ02			= ToolData.reqInt		(json, "typ02"	, null);
 		
+		if(typ01 == null && typ02== null && stats ==null) {
+			API.doResponse(response,DefAPI.API_MSG_KO);
+			return;
+		}
 		
 		if (!canWorkWithObj(user, WORK_LST, null, stats)){ //other param after objTyp...
 			API.doResponse(response,DefAPI.API_MSG_KO);
 			return;
 		}
 		//-------------------------------------------------------------------
-		Criterion 	cri 				= reqRestriction(user, searchKey, null, stats);				
+		Criterion 	cri 				= reqRestriction(user, searchKey, null, stats, typ01, typ02);				
 
 		List<ViAutUserDyn> list 		= reqListDyn(dataTableOption, cri);
 		if (list==null ){
@@ -475,22 +480,22 @@ public class ServiceAutUser implements IService {
 		return cri;
 	}
 
-	private static Criterion reqRestriction(TaAutUser user,  Set<String> searchKey, Integer manId, Set<Integer> stats ) throws Exception {	
+	private static Criterion reqRestriction(TaAutUser user,  Set<String> searchKey, Integer manId, Set<Integer> stats, Integer typ01, Integer typ02 ) throws Exception {	
 		//--Pre-Check condition---------------------------------------------------
 		if (stats == null){
 			stats = new HashSet<>() ; 
-			stats.add(ViAutUserDyn.STAT_DELETED);
+			stats.add(ViAutUserDyn.STAT_ACTIVE);
 		}
 				
 		Criterion cri = Restrictions.in(ViAutUserDyn.ATT_I_STATUS, stats);
-//		
-//		if(typ01 != null) {
-//			cri = Restrictions.and(	cri, Restrictions.eq(ViAutUserDyn.ATT_I_TYPE_01 , typ01));
-//			
-////			if(typ01 == ViAutUserDyn.TYPE_01_AGENT) {
-////				cri = Restrictions.and(	cri, Restrictions.eq(ViAutUserDyn.ATT_I_TYPE_02 , typ02));
-////			}
-//		}
+		
+		if(typ01 != null) {
+			cri = Restrictions.and(	cri, Restrictions.eq(ViAutUserDyn.ATT_I_TYPE_01 , typ01));
+			
+//			if(typ01 == ViAutUserDyn.TYPE_01_AGENT) {
+//				cri = Restrictions.and(	cri, Restrictions.eq(ViAutUserDyn.ATT_I_TYPE_02 , typ02));
+//			}
+		}
 
 		if (searchKey != null) {
 			for (String s : searchKey){
@@ -498,9 +503,7 @@ public class ServiceAutUser implements IService {
 						Restrictions.ilike(ViAutUserDyn.ATT_T_LOGIN_01, '%'+s+'%'),
 						Restrictions.ilike(ViAutUserDyn.ATT_T_LOGIN_02, '%'+s+'%'),
 						Restrictions.ilike(ViAutUserDyn.ATT_T_INFO_01, '%'+s+'%'),
-						Restrictions.ilike(ViAutUserDyn.ATT_T_INFO_02, '%'+s+'%'), 
-						Restrictions.ilike(ViAutUserDyn.ATT_T_INFO_03, '%'+s+'%')
-						)
+						Restrictions.ilike(ViAutUserDyn.ATT_T_INFO_02, '%'+s+'%'))
 				);
 			}
 		}
@@ -524,8 +527,7 @@ public class ServiceAutUser implements IService {
 		switch(sortCol){
 		case 0: colName = ViAutUserDyn.ATT_I_ID; break;		
 		case 1: colName = ViAutUserDyn.ATT_T_LOGIN_01; break;			
-		case 2: colName = ViAutUserDyn.ATT_T_INFO_01; break;	
-
+		case 2: colName = ViAutUserDyn.ATT_T_INFO_01; break;		
 		}
 
 		if (colName!=null){

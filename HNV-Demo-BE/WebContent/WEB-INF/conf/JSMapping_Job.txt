@@ -14,8 +14,8 @@ TaJobReport                   ; T_Code_01                     ; code01
 TaJobReport                   ; T_Code_02                     ; code02                       
 TaJobReport                   ; D_Date_01                     ; dt01                          
 TaJobReport                   ; D_Date_02                     ; dt02                          
-TaJobReport                   ; I_Info_01                     ; inf01  
-TaJobReport                   ; I_Info_02                     ; inf02                         
+TaJobReport                   ; T_Info_01                     ; inf01  
+TaJobReport                   ; T_Info_02                     ; inf02                         
 TaJobReport                   ; I_Status                      ; stat                          
 TaJobReport                   ; I_Aut_User_01                 ; uId01                     
 TaJobReport                   ; I_Aut_User_02                 ; uId02                     
@@ -25,13 +25,14 @@ TaJobReport                   ; F_Val_01                      ; val01
 TaJobReport                   ; F_Val_02                      ; val02
 TaJobReport                   ; F_Val_03                      ; val03
 TaJobReport                   ; F_Val_04                      ; val04      
+TaJobReport                   ; O_Documents                   ; files  
 TaJobReport                   ; O_List_Report_Detail          ; lstRp
 TaJobReport                   ; O_List_Report_Resume          ; lstRpResume
 TaJobReport                   ; O_Per_Create         		  ; uId01_name
 TaJobReport                   ; O_Per_Validate          	  ; uId02_name
 TaJobReport					  ;	O_Per_Owner					  ; uId03_name
 TaJobReport					  ;	O_Per_Man					  ; manId_name
-TaJobReport					  ;	O_Files					  	  ; files
+
 
 TaJobReportDetail             ; I_ID                          ; id                            
 TaJobReportDetail             ; I_Tpy_Category             	  ; catId                      
